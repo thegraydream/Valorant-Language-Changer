@@ -1,7 +1,10 @@
 # Version
 VERSION = "1.0.0"
+
 import os
-import requests
+try:
+    import requests
+except:os.system('pip install requests')
 import json
 
 if not os.path.exists('theme.json'):open('theme.json', 'w', encoding='utf-8').write(requests.get('https://raw.githubusercontent.com/thegraydream/Valorant-Language-Changer/master/theme.json').text)
@@ -12,10 +15,20 @@ import json
 import threading
 import shutil
 import time
-import customtkinter
-customtkinter.set_default_color_theme("theme.json")
-from tkinter import filedialog, messagebox
-import psutil
+
+try:
+    import customtkinter
+    customtkinter.set_default_color_theme("theme.json")
+    from tkinter import filedialog, messagebox
+    import psutil
+except:
+    os.system('pip install tkinter')
+    os.system('pip install customtkinter')
+    os.system('pip install psutil')
+    import customtkinter
+    customtkinter.set_default_color_theme("theme.json")
+    from tkinter import filedialog, messagebox
+    import psutil
 
 
 # Application Data
@@ -29,10 +42,9 @@ class application:
             application.data = open('application.json', 'r', encoding='utf-8').read()
 
     def get(data):
-        try:
-            if application.data == None:application.get_data()
-            return json.loads(application.data)[data]
-        except Exception as e:log.error(e)
+        if application.data == None:application.get_data()
+        return json.loads(str(application.data).replace("'", '"'))[data]
+
 
 # Riot Data
 class riot_data:
@@ -60,7 +72,7 @@ class log:
 # Checking File
 def check_file():
     if not os.path.exists('config.json'):open('config.json', 'w', encoding='utf-8').write(requests.get('https://raw.githubusercontent.com/thegraydream/Valorant-Language-Changer/master/config.json').text)
-    if not os.path.exists('icon.ico'):open('icon.ico', 'wb', encoding='utf-8').write(requests.get('https://raw.githubusercontent.com/thegraydream/Valorant-Language-Changer/master/icon.ico').content)
+    if not os.path.exists('icon.ico'):open('icon.ico', 'wb').write(requests.get('https://raw.githubusercontent.com/thegraydream/Valorant-Language-Changer/master/icon.ico').content)
 
 
 # Manifest Downloader
@@ -305,11 +317,10 @@ class App(customtkinter.CTk):
 
 
 if __name__ == "__main__":
-    try:
+
         if VERSION != application.get('version'):messagebox.showinfo(application.get('name'), f"You don't have the latest version of '{application.get('name')}'! We recommend using the latest version ({application.get('version')}), your current version ({VERSION}).\n\nGithub link : {application.get('github')}")
         check_file()
         download_ManifestDownloader()
         app = App()
         app.mainloop()
-    except Exception as e:
-        log.error(e)
+
